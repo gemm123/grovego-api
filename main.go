@@ -1,7 +1,7 @@
 package main
 
 import (
-	"gemm123/treetrek/routes"
+	"gemm123/grovego-api/routes"
 )
 
 func main() {

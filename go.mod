@@ -1,4 +1,4 @@
-module gemm123/treetrek
+module gemm123/grovego-api
 
 go 1.20
 
