@@ -1,20 +1,25 @@
 package routes
 
 import (
-	"gemm123/grovego-api/controllers"
+	"gemm123/grovego-api/controller"
+	"gemm123/grovego-api/repository"
+	"gemm123/grovego-api/service"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
-func Routes() *gin.Engine {
+func Routes(db *gorm.DB) *gin.Engine {
 	router := gin.Default()
 
-	router.GET("/ping", controllers.Ping)
+	userRepository := repository.NewRepositoyUser(db)
+	userService := service.NewServiceUser(userRepository)
+	userController := controller.NewControllerUser(userService)
 
 	api := router.Group("/api/v1")
 
 	auth := api.Group("/auth")
-	auth.POST("/register", controllers.Register)
+	auth.POST("/register", userController.Register)
 
 	return router
 }
