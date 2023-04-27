@@ -1,7 +1,9 @@
 package service
 
 import (
+	"errors"
 	"gemm123/grovego-api/helper"
+	"gemm123/grovego-api/jwt"
 	"gemm123/grovego-api/models"
 	"gemm123/grovego-api/repository"
 	"time"
@@ -15,6 +17,8 @@ type serviceUser struct {
 
 type ServiceUser interface {
 	Register(input models.RegisterUser) error
+	CheckAccount(input models.Login) error
+	GenerateToken(input models.Login) (string, error)
 }
 
 func NewServiceUser(repositoryUser repository.RepositoyUser) *serviceUser {
@@ -47,4 +51,32 @@ func (s *serviceUser) Register(input models.RegisterUser) error {
 	}
 
 	return nil
+}
+
+func (s *serviceUser) CheckAccount(input models.Login) error {
+	user, err := s.repositoryUser.FindUserByEmail(input.Email)
+	if err != nil {
+		return errors.New("email or password not registered")
+	}
+
+	ok := helper.CheckPasswordHash(input.Password, user.Password)
+	if !ok {
+		return errors.New("email or password not registered")
+	}
+
+	return err
+}
+
+func (s *serviceUser) GenerateToken(input models.Login) (string, error) {
+	user, err := s.repositoryUser.FindUserByEmail(input.Email)
+	if err != nil {
+		return "", err
+	}
+
+	token, err := jwt.GenerateToken(user.ID, user.Email, user.Username)
+	if err != nil {
+		return "", err
+	}
+
+	return token, nil
 }
