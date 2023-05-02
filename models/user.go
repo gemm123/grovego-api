@@ -30,3 +30,11 @@ type Login struct {
 	Email    string `json:"email" binding:"required"`
 	Password string `json:"password" binding:"required"`
 }
+
+type UserResponse struct {
+	Name      string `json:"name"`
+	Username  string `json:"username"`
+	Email     string `json:"email"`
+	Phone     int    `json:"phone"`
+	ImagePath string `json:"imagePath"`
+}

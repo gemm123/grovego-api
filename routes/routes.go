@@ -2,6 +2,7 @@ package routes
 
 import (
 	"gemm123/grovego-api/controller"
+	"gemm123/grovego-api/middleware"
 	"gemm123/grovego-api/repository"
 	"gemm123/grovego-api/service"
 
@@ -21,6 +22,7 @@ func Routes(db *gorm.DB) *gin.Engine {
 	auth := api.Group("/auth")
 	auth.POST("/register", userController.Register)
 	auth.POST("/login", userController.Login)
+	auth.POST("/user", middleware.CheckAuthorization(), userController.User)
 
 	return router
 }

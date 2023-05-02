@@ -19,6 +19,7 @@ type ServiceUser interface {
 	Register(input models.RegisterUser) error
 	CheckAccount(input models.Login) error
 	GenerateToken(input models.Login) (string, error)
+	GetUser(userID string) (models.UserResponse, error)
 }
 
 func NewServiceUser(repositoryUser repository.RepositoyUser) *serviceUser {
@@ -79,4 +80,21 @@ func (s *serviceUser) GenerateToken(input models.Login) (string, error) {
 	}
 
 	return token, nil
+}
+
+func (s *serviceUser) GetUser(userID string) (models.UserResponse, error) {
+	user, err := s.repositoryUser.FindUserByID(userID)
+	if err != nil {
+		return models.UserResponse{}, err
+	}
+
+	userResponse := models.UserResponse{
+		Email:     user.Email,
+		Username:  user.Username,
+		Name:      user.Name,
+		Phone:     user.Phone,
+		ImagePath: user.ImagePath,
+	}
+
+	return userResponse, nil
 }
