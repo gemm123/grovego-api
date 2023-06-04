@@ -7,6 +7,7 @@ import (
 	"gemm123/grovego-api/service"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -26,6 +27,7 @@ func (ctr *controllerRoute) RecommendationRoute(c *gin.Context) {
 			"message": "failed: " + err.Error(),
 			"status":  http.StatusBadRequest,
 		})
+		return
 	}
 
 	sendRecommendationRouteToML, _ := json.Marshal(input)
@@ -62,23 +64,45 @@ func (ctr *controllerRoute) RecommendationRoute(c *gin.Context) {
 	})
 }
 
-// func (ctr *controllerRoute) Finish(c *gin.Context) {
-// 	userID := c.MustGet("userID").(string)
-// 	var input models.InputFinishRoute
-// 	if err := c.ShouldBindJSON(&input); err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{
-// 			"message": "failed: " + err.Error(),
-// 			"status":  http.StatusBadRequest,
-// 		})
-// 	}
+func (ctr *controllerRoute) Finish(c *gin.Context) {
+	userID := c.MustGet("userID").(string)
+	var input models.InputFinishRoute
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "failed: " + err.Error(),
+			"status":  http.StatusBadRequest,
+		})
+		return
+	}
 
-// 	route := models.Route{
-// 		UserID: userID,
-// 		RouteCoordinate: input.RouteCoordinate,
-// 		RouteName: input.RouteName,
-// 		Distance: input.Distance,
-// 		Duration: time.Now(),
-// 	}
+	parsedTime, err := time.Parse("15:04:05", input.Duration)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "failed: " + err.Error(),
+			"status":  http.StatusInternalServerError,
+		})
+		return
+	}
 
-// 	err := ctr.serviceRoute.CreateRouteUser(route)
-// }
+	route := models.Route{
+		UserID:          userID,
+		RouteCoordinate: input.RouteCoordinate,
+		RouteName:       input.RouteName,
+		Distance:        input.Distance,
+		Duration:        parsedTime,
+	}
+
+	err = ctr.serviceRoute.CreateRouteUser(route)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "failed: " + err.Error(),
+			"status":  http.StatusInternalServerError,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "success",
+		"status":  http.StatusOK,
+	})
+}

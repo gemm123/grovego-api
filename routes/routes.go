@@ -30,6 +30,7 @@ func Routes(db *gorm.DB) *gin.Engine {
 
 	route := api.Group("/route")
 	route.POST("/recommendation", middleware.CheckAuthorization(), routeController.RecommendationRoute)
+	route.POST("/finish", middleware.CheckAuthorization(), routeController.Finish)
 
 	return router
 }

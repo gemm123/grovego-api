@@ -13,15 +13,11 @@ type InputRecommendationRoute struct {
 	Scenery       int    `json:"scenery"`
 }
 
-type SendRecommendationRouteToML struct {
-	Data InputRecommendationRoute `json:"data"`
-}
-
 type RecommendationRouteFromML struct {
-	RouteCoordinates string `json:"routeCoordinates"`
-	Distance         string `json:"distance"`
-	Duration         string `json:"duration"`
-	RouteName        string `json:"routeName"`
+	RouteCoordinates string  `json:"routeCoordinates"`
+	Distance         float64 `json:"distance"`
+	Duration         float64 `json:"duration"`
+	RouteName        string  `json:"routeName"`
 }
 
 type Route struct {
@@ -36,8 +32,8 @@ type Route struct {
 }
 
 type InputFinishRoute struct {
-	RouteCoordinate string    `json:"routeCoordinate"`
-	RouteName       string    `json:"routeName"`
-	Distance        float64   `json:"distance"`
-	Duration        time.Time `json:"duration"`
+	RouteCoordinate string  `json:"routeCoordinate"`
+	RouteName       string  `json:"routeName"`
+	Distance        float64 `json:"distance"`
+	Duration        string  `json:"duration"`
 }
