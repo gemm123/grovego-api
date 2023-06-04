@@ -22,6 +22,7 @@ type User struct {
 	Phone     int
 	Password  string
 	ImagePath string
+	Routes    []Route `gorm:"foreignKey:UserID"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }

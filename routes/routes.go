@@ -17,12 +17,19 @@ func Routes(db *gorm.DB) *gin.Engine {
 	userService := service.NewServiceUser(userRepository)
 	userController := controller.NewControllerUser(userService)
 
+	routeRepository := repository.NewRepositoryRoute(db)
+	routeService := service.NewServiceRoute(routeRepository)
+	routeController := controller.NewControllerRoute(routeService)
+
 	api := router.Group("/api/v1")
 
 	auth := api.Group("/auth")
 	auth.POST("/register", userController.Register)
 	auth.POST("/login", userController.Login)
 	auth.POST("/user", middleware.CheckAuthorization(), userController.User)
+
+	route := api.Group("/route")
+	route.POST("/recommendation", middleware.CheckAuthorization(), routeController.RecommendationRoute)
 
 	return router
 }
